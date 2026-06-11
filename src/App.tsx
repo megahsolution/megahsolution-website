@@ -4,6 +4,12 @@ function App() {
   const [showApp, setShowApp] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // --- STATE MANAGEMENT UNTUK PIPELINE FASTAPI ---
+  const [inputData, setInputData] = useState('');
+  const [outputResult, setOutputResult] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Efek Animasi Constellation Net
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -171,32 +177,93 @@ function App() {
     };
   }, []);
 
+  // --- FUNGSI EKSEKUSI SOLVER (KONEKSI KE FASTAPI) ---
+  const handleExecuteSolver = async () => {
+    if (!inputData.trim()) {
+      alert("Silakan masukkan datasets atau parameter data terlebih dahulu.");
+      return;
+    }
+
+    setIsLoading(true);
+    setOutputResult('');
+
+    try {
+      // Mengirimkan request POST ke endpoint FastAPI sesuai rules vercel.json
+      const response = await fetch('/api/proses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ teks_mentah: inputData }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === 'success') {
+        setOutputResult(data.hasil);
+      } else {
+        setOutputResult(`[ERROR]: ${data.detail || 'Gagal memproses eksekusi kernel.'}`);
+      }
+    } catch (error: any) {
+      setOutputResult(`[CONNECTION_FAILED]: Gagal terhubung ke modul FastAPI.\n${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // ---------------- CORE UI RENDERING (CSS STANDARD) ----------------
 
+  // PANEL INTERFACE UTAMA APLIKASI DATA PROCESSING
   if (showApp) {
     return (
-      <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#0a0f1d', color: '#f4f6fa', display: 'flex', alignItems: 'center', justifyOrigin: 'center', padding: '24px', position: 'relative', fontFamily: 'sans-serif' }}>
+      <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#0a0f1d', color: '#f4f6fa', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', position: 'relative', fontFamily: 'sans-serif' }}>
         <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '896px', backgroundColor: '#0d1527', border: '1px solid rgba(0, 229, 255, 0.15)', borderRadius: '4px', padding: '32px' }}>
+          
           <button 
-            onClick={() => setShowApp(false)}
-            style={{ background: 'none', border: 'none', color: '#7e8b9b', cursor: 'pointer', fontSize: '11px', textTransform: 'uppercase', trackingSpace: '0.2em', marginBottom: '24px' }}
+            onClick={() => {
+              setShowApp(false);
+              setInputData('');
+              setOutputResult('');
+            }}
+            style={{ background: 'none', border: 'none', color: '#7e8b9b', cursor: 'pointer', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '24px' }}
           >
             ← Back to System Interface
           </button>
+          
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: '#ffffff' }}>MGS Data Analytics Dashboard</h2>
           <p style={{ color: '#7e8b9b', fontFamily: 'monospace', fontSize: '12px', marginBottom: '24px' }}>[STATUS: PIPELINE_READY // ENGINE: FASTAPI]</p>
+          
           <textarea 
-            style={{ width: '100%', h: '256px', height: '250px', padding: '16px', backgroundColor: '#0a0f1d', border: '1px solid rgba(0, 229, 255, 0.1)', borderRadius: '4px', color: '#f4f6fa', fontFamily: 'monospace', fontSize: '14px', outline: 'none', resize: 'none' }}
+            value={inputData}
+            onChange={(e) => setInputData(e.target.value)}
+            style={{ width: '100%', height: '180px', padding: '16px', backgroundColor: '#0a0f1d', border: '1px solid rgba(0, 229, 255, 0.1)', borderRadius: '4px', color: '#f4f6fa', fontFamily: 'monospace', fontSize: '14px', outline: 'none', resize: 'none', marginBottom: '16px' }}
             placeholder="Paste raw engineering datasets, standard tags, or failure event descriptions here..."
           />
-          <button style={{ marginTop: '16px', padding: '12px 32px', backgroundColor: '#00e5ff', border: 'none', color: '#0a0f1d', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: '2px', cursor: 'pointer' }}>
-            Execute Core Solver
+          
+          <button 
+            onClick={handleExecuteSolver}
+            disabled={isLoading}
+            style={{ padding: '12px 32px', backgroundColor: isLoading ? '#334155' : '#00e5ff', border: 'none', color: '#0a0f1d', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: '2px', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.3s' }}
+          >
+            {isLoading ? 'Processing Pipeline...' : 'Execute Core Solver'}
           </button>
+
+          {/* BOX OUTPUT HASIL PROSES DATA ANOMALIES/SOLVER */}
+          {outputResult && (
+            <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#0a0f1d', border: '1px solid rgba(0, 230, 118, 0.2)', borderRadius: '4px' }}>
+              <h4 style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.2em', color: '#00e676', marginBottom: '8px', fontFamily: 'monospace' }}>[SOLVER_OUTPUT_RESULT]</h4>
+              <pre style={{ margin: 0, color: '#f4f6fa', fontFamily: 'monospace', fontSize: '14px', whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+                {outputResult}
+              </pre>
+            </div>
+          )}
+
         </div>
       </div>
     );
   }
 
+  // TAMPILAN DASHBOARD LANDING PAGE UTAMA (CYBER TELEMETRY)
   return (
     <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#0a0f1d', color: '#f4f6fa', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', fontFamily: 'sans-serif' }}>
       
@@ -240,7 +307,7 @@ function App() {
         <div style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.4em', color: '#00e676', marginBottom: '24px' }}>
           Megah Global Solution
         </div>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', trackingSpace: '-0.02em', lineHeight: 1.25, marginBottom: '40px', color: '#ffffff' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: 1.25, marginBottom: '40px', color: '#ffffff' }}>
           Advanced Intelligence Solutions with Human in the Loop.
         </h1>
 
