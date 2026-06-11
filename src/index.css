@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Quicksand", sans-serif;
+
+  /* Custom sub-base text sizes to ensure they compile in Tailwind CSS v4 */
+  --font-size-2xs: 0.6875rem; /* 11px */
+  --font-size-3xs: 0.625rem;  /* 10px */
+  --font-size-4xs: 0.53125rem; /* 8.5px */
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Data Science Workspace",
+  "description": "A robust, interactive workspace for industrial data science workflows. Simulate Streamlit human-in-the-loop ingestion and sanitization validation rules, view and export production-ready Python modules, and monitor pipeline data health in real time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
