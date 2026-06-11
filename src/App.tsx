@@ -4,14 +4,13 @@ function App() {
   const [showApp, setShowApp] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Efek Animasi Constellation Net (Konversi dari JavaScript murni ke React)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let particles: Particle[] = [];
+    let particles: any[] = [];
     let particleCount = window.innerWidth < 768 ? 40 : 80;
     const connectionDistance = 140;
     let animationFrameId: number;
@@ -19,6 +18,7 @@ function App() {
     let mouse = { x: null as number | null, y: null as number | null, radius: 150, clickActive: false, clickTimer: 0 };
 
     const resizeCanvas = () => {
+      if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       particleCount = window.innerWidth < 768 ? 40 : 80;
@@ -36,8 +36,8 @@ function App() {
       isGreen: boolean;
 
       constructor() {
-        this.x = Math.random() * canvas!.width;
-        this.y = Math.random() * canvas!.height;
+        this.x = Math.random() * (canvas?.width || window.innerWidth);
+        this.y = Math.random() * (canvas?.height || window.innerHeight);
         this.vx = (Math.random() - 0.5) * 0.35;
         this.vy = (Math.random() - 0.5) * 0.35;
         this.size = Math.random() * 2 + 1;
@@ -48,8 +48,10 @@ function App() {
         this.x += this.vx;
         this.y += this.vy;
 
-        if (this.x < 0 || this.x > canvas!.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas!.height) this.vy *= -1;
+        if (canvas) {
+          if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+          if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
 
         if (mouse.x !== null && mouse.y !== null) {
           let dx = this.x - mouse.x;
@@ -68,10 +70,11 @@ function App() {
       }
 
       draw() {
-        ctx!.beginPath();
-        ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx!.fillStyle = this.isGreen ? 'rgba(0, 230, 118, 0.6)' : 'rgba(0, 229, 255, 0.5)';
-        ctx!.fill();
+        if (!ctx) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.isGreen ? 'rgba(0, 230, 118, 0.6)' : 'rgba(0, 229, 255, 0.5)';
+        ctx.fill();
       }
     }
 
@@ -83,6 +86,7 @@ function App() {
     };
 
     const drawLines = () => {
+      if (!ctx) return;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -91,19 +95,20 @@ function App() {
 
           if (distance < connectionDistance) {
             const alpha = (1 - (distance / connectionDistance)) * 0.12;
-            ctx!.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
-            ctx!.lineWidth = 1;
-            ctx!.beginPath();
-            ctx!.moveTo(particles[i].x, particles[i].y);
-            ctx!.lineTo(particles[j].x, particles[j].y);
-            ctx!.stroke();
+            ctx.strokeStyle = `rgba(0, 229, 255, ${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
           }
         }
       }
     };
 
     const animate = () => {
-      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas?.width || window.innerWidth, canvas?.height || window.innerHeight);
 
       if (mouse.clickActive) {
         mouse.clickTimer--;
@@ -166,33 +171,25 @@ function App() {
     };
   }, []);
 
-  // ---------------- PAGE SWITCH LOGIC ----------------
-  
-  // Opsi A: Tampilan Panel Aplikasi Pemrosesan Data
+  // ---------------- CORE UI RENDERING (CSS STANDARD) ----------------
+
   if (showApp) {
     return (
-      <div className="min-h-screen w-full bg-[#0a0f1d] text-[#f4f6fa] flex items-center justify-center p-6 relative font-sans">
-        <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(0,229,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,229,255,0.01)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-1"></div>
-        
-        <div className="relative z-10 w-full max-w-4xl bg-[#0d1527] border border-[rgba(0,229,255,0.15)] rounded p-8 shadow-2xl shadow-cyan-500/5">
+      <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#0a0f1d', color: '#f4f6fa', display: 'flex', alignItems: 'center', justifyOrigin: 'center', padding: '24px', position: 'relative', fontFamily: 'sans-serif' }}>
+        <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '896px', backgroundColor: '#0d1527', border: '1px solid rgba(0, 229, 255, 0.15)', borderRadius: '4px', padding: '32px' }}>
           <button 
             onClick={() => setShowApp(false)}
-            className="mb-6 text-xs uppercase tracking-widest text-[#7e8b9b] hover:text-[#00e5ff] transition"
+            style={{ background: 'none', border: 'none', color: '#7e8b9b', cursor: 'pointer', fontSize: '11px', textTransform: 'uppercase', trackingSpace: '0.2em', marginBottom: '24px' }}
           >
             ← Back to System Interface
           </button>
-          
-          {/* Taruh/Hubungkan Komponen Utama FastAPI Processing Dashboard Anda di Sini */}
-          <h2 className="text-2xl font-bold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-[#a3b8cc]">
-            MGS Data Analytics Dashboard
-          </h2>
-          <p className="text-[#7e8b9b] text-sm mb-6 font-mono">[STATUS: PIPELINE_READY // ENGINE: FASTAPI]</p>
-          
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px', color: '#ffffff' }}>MGS Data Analytics Dashboard</h2>
+          <p style={{ color: '#7e8b9b', fontFamily: 'monospace', fontSize: '12px', marginBottom: '24px' }}>[STATUS: PIPELINE_READY // ENGINE: FASTAPI]</p>
           <textarea 
-            className="w-full h-64 p-4 bg-[#0a0f1d] border border-[rgba(0,229,255,0.1)] rounded text-[#f4f6fa] font-mono text-sm focus:outline-none focus:border-[#00e5ff] transition resize-none"
+            style={{ width: '100%', h: '256px', height: '250px', padding: '16px', backgroundColor: '#0a0f1d', border: '1px solid rgba(0, 229, 255, 0.1)', borderRadius: '4px', color: '#f4f6fa', fontFamily: 'monospace', fontSize: '14px', outline: 'none', resize: 'none' }}
             placeholder="Paste raw engineering datasets, standard tags, or failure event descriptions here..."
           />
-          <button className="mt-4 px-8 py-3 bg-[#00e5ff] hover:bg-cyan-400 text-[#0a0f1d] text-xs font-bold uppercase tracking-wider rounded transition-all transform hover:-translate-y-0.5 shadow-lg shadow-cyan-500/20">
+          <button style={{ marginTop: '16px', padding: '12px 32px', backgroundColor: '#00e5ff', border: 'none', color: '#0a0f1d', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: '2px', cursor: 'pointer' }}>
             Execute Core Solver
           </button>
         </div>
@@ -200,30 +197,72 @@ function App() {
     );
   }
 
-  // Opsi B: Tampilan Landing Page Asli (Ditambah Tombol Eksplorasi Baru)
   return (
-    <div className="min-h-screen w-full bg-[#0a0f1d] text-[#f4f6fa] flex items-center justify-center overflow-hidden relative font-sans select-none">
+    <div style={{ minHeight: '100vh', width: '100%', backgroundColor: '#0a0f1d', color: '#f4f6fa', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', fontFamily: 'sans-serif' }}>
       
-      {/* Background Blueprint Tech Grids */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(0,229,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,229,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] bg-center pointer-events-none z-1"></div>
-      <div className="absolute top-[30%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[rgba(0,229,255,0.06)] to-transparent pointer-events-none z-1"></div>
-      <div className="absolute left-[15%] top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-[rgba(0,229,255,0.06)] to-transparent pointer-events-none z-1"></div>
+      {/* Background Grids */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: 'linear-gradient(rgba(0, 229, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.02) 1px, transparent 1px)', backgroundSize: '40px 40px', backgroundPosition: 'center', pointerEvents: 'none', zIndex: 1 }}></div>
+      
+      {/* Canvas Animation */}
+      <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2 }}></canvas>
 
-      {/* Crosshairs HUD */}
-      <div className="absolute w-[10px] h-[10px] border border-[rgba(0,229,255,0.15)] z-[3] pointer-events-none top-[15px] left-[15px] border-r-0 border-b-0"></div>
-      <div className="absolute w-[10px] h-[10px] border border-[rgba(0,229,255,0.15)] z-[3] pointer-events-none top-[15px] right-[15px] border-l-0 border-b-0"></div>
-      <div className="absolute w-[10px] h-[10px] border border-[rgba(0,229,255,0.15)] z-[3] pointer-events-none bottom-[15px] left-[15px] border-r-0 border-t-0"></div>
-      <div className="absolute w-[10px] h-[10px] border border-[rgba(0,229,255,0.15)] z-[3] pointer-events-none bottom-[15px] right-[15px] border-l-0 border-t-0"></div>
-
-      {/* Dynamic Constellation Net Canvas */}
-      <canvas ref={canvasRef} id="constellation-canvas" className="absolute top-0 left-0 w-full h-full z-[2]"></canvas>
-
-      {/* Engineering Data Telemetry HUD */}
-      <div className="absolute font-mono text-[10px] text-[#7e8b9b] pointer-events-none z-[3] leading-relaxed top-[20px] left-[20px] text-left max-md:top-[15px] max-md:left-[15px] max-md:text-[8px]">
+      {/* Telemetry HUD */}
+      <div style={{ position: 'absolute', fontFamily: 'monospace', fontSize: '10px', color: '#7e8b9b', pointerEvents: 'none', zIndex: 3, top: '20px', left: '20px', textAlign: 'left' }}>
         SYS.LOC: [06°11'21"S // 106°49'44"E]<br />
-        ASSET.EVAL: <span className="text-[#00e5ff] font-bold">VALID</span><br />
-        RELIABILITY_IDX: <span className="text-[#00e676] font-bold">0.99942</span><br />
+        ASSET.EVAL: <span style={{ color: '#00e5ff', fontWeight: 'bold' }}>VALID</span><br />
+        RELIABILITY_IDX: <span style={{ color: '#00e676', fontWeight: 'bold' }}>0.99942</span><br />
         MODEL.TYPE: PRED_ANOMALY
       </div>
 
-      <div className="absolute font-mono text-[10px] text-[#7e8b9b] pointer-events-none z-[3] leading-relaxed bottom-[20px] left-[20px] text-left max-md:bottom-
+      <div style={{ position: 'absolute', fontFamily: 'monospace', fontSize: '10px', color: '#7e8b9b', pointerEvents: 'none', zIndex: 3, bottom: '20px', left: '20px', textAlign: 'left' }}>
+        [MATRIX DATA FLOW]<br />
+        10011010 00110101 11001110<br />
+        01101100 <span style={{ color: '#00e5ff', fontWeight: 'bold' }}>14224.ISO</span> 01011011<br />
+        STATUS: SYSTEM_LAUNCH
+      </div>
+
+      <div style={{ position: 'absolute', fontFamily: 'monospace', fontSize: '10px', color: '#7e8b9b', pointerEvents: 'none', zIndex: 3, top: '20px', right: '20px', textAlign: 'right' }}>
+        PARAMETER MATRIX v55.000<br />
+        X-AXIS_DEV: +0.0034mm<br />
+        Y-AXIS_DEV: -0.0012mm<br />
+        Z-AXIS_TGT: <span style={{ color: '#00e5ff', fontWeight: 'bold' }}>100.00%</span>
+      </div>
+
+      <div style={{ position: 'absolute', fontFamily: 'monospace', fontSize: '10px', color: '#7e8b9b', pointerEvents: 'none', zIndex: 3, bottom: '20px', right: '20px', textAlign: 'right' }}>
+        RESOLUTION: ITERATIVE<br />
+        DYNAMIC SOLVER: ACTIVE<br />
+        OPTIMAL CONFIG FOUND.<br />
+        <span style={{ color: '#00e676', fontWeight: 'bold' }}>✓ ROOT_CAUSE_RESOLVED</span>
+      </div>
+
+      {/* Container */}
+      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '32px', maxWidth: '680px', width: '90%' }}>
+        <div style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.4em', color: '#00e676', marginBottom: '24px' }}>
+          Megah Global Solution
+        </div>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', trackingSpace: '-0.02em', lineHeight: 1.25, marginBottom: '40px', color: '#ffffff' }}>
+          Advanced Intelligence Solutions with Human in the Loop.
+        </h1>
+
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a 
+            href="mailto:jenmegahs@gmail.com?subject=Inquiry:%20Strategic%20Engineering%20Solution%20Discussion"
+            style={{ display: 'inline-block', backgroundColor: '#0a0f1d', color: '#00e5ff', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.2em', padding: '16px 40px', border: '1px solid #00e5ff', borderRadius: '2px', cursor: 'pointer', textDecoration: 'none', transition: 'all 0.3s' }}
+          >
+            Discuss Now
+          </a>
+
+          <button 
+            onClick={() => setShowApp(true)}
+            style={{ display: 'inline-block', backgroundColor: '#0a0f1d', color: '#00e676', fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.2em', padding: '16px 32px', border: '1px solid #00e676', borderRadius: '2px', cursor: 'pointer', transition: 'all 0.3s' }}
+          >
+            Explore MGS Data Analytics
+          </button>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+export default App;
