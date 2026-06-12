@@ -47,7 +47,7 @@ import {
 } from "./utils/dataset";
 import { DataRecord, IngestionDiagnostics, EngineeringDiagnostics, ColumnEngineeringConfig, EdaDiagnostics, CorrelationPair } from "./types";
 import SourceCodeExplorer from "./Pages/DataAnalytics/SourceCodeExplorer";
-import { DataScienceSandbox } from "./components/DataScienceSandbox";
+import { DataScienceSandbox } from "./Pages/DataAnalytics/DataScienceSandbox";
 import { DatasetExplorer } from "./Pages/DataAnalytics/DatasetExplorer";
 
 function DataWorkspace() {
