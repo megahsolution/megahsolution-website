@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import rawSchedule from "./MRTSchedule.json";
+import rawSchedule from "./data/MRTSchedule.json";
 import { ScheduleItem, DayType } from "./types";
 
 export const STATIONS = [
