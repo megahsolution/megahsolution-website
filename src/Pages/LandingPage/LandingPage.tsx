@@ -210,6 +210,25 @@ export default function LandingPage() {
   }}
 >
   Explore MGS Data Analytics
+<button
+  onClick={() => navigate("/MRTTracker")}
+  style={styles.btnExplore}
+  onMouseEnter={(e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    el.style.color = "#0a0f1d";
+    el.style.backgroundColor = "#00e676";
+    el.style.boxShadow = "0 0 30px rgba(0, 230, 118, 0.3)";
+    el.style.transform = "translateY(-2px)";
+  }}
+  onMouseLeave={(e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    el.style.color = "#00e676";
+    el.style.backgroundColor = "#0a0f1d";
+    el.style.boxShadow = "0 0 20px rgba(0, 230, 118, 0.05)";
+    el.style.transform = "translateY(0)";
+  }}
+>
+  MRT Tracker
 </button>
 
 <button
