@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
+  import { useNavigate } from "react-router-dom";
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -192,25 +193,47 @@ export default function LandingPage() {
 
         {/* Explore MGS Data Analytics Button */}
         <button
-          onClick={() => navigate("/app")}
-          style={styles.btnExplore}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLButtonElement;
-            el.style.color = "#0a0f1d";
-            el.style.backgroundColor = "#00e676";
-            el.style.boxShadow = "0 0 30px rgba(0, 230, 118, 0.3)";
-            el.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLButtonElement;
-            el.style.color = "#00e676";
-            el.style.backgroundColor = "#0a0f1d";
-            el.style.boxShadow = "0 0 20px rgba(0, 230, 118, 0.05)";
-            el.style.transform = "translateY(0)";
-          }}
-        >
-          Explore MGS Data Analytics
-        </button>
+  onClick={() => navigate("/MGSDataAnalytics")}
+  style={styles.btnExplore}
+  onMouseEnter={(e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    el.style.color = "#0a0f1d";
+    el.style.backgroundColor = "#00e676";
+    el.style.boxShadow = "0 0 30px rgba(0, 230, 118, 0.3)";
+    el.style.transform = "translateY(-2px)";
+  }}
+  onMouseLeave={(e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    el.style.color = "#00e676";
+    el.style.backgroundColor = "#0a0f1d";
+    el.style.boxShadow = "0 0 20px rgba(0, 230, 118, 0.05)";
+    el.style.transform = "translateY(0)";
+  }}
+>
+  Explore MGS Data Analytics
+</button>
+
+<button
+  onClick={() => navigate("/MRTTracker")}
+  style={styles.btnExplore}
+  onMouseEnter={(e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    el.style.color = "#0a0f1d";
+    el.style.backgroundColor = "#00e676";
+    el.style.boxShadow = "0 0 30px rgba(0, 230, 118, 0.3)";
+    el.style.transform = "translateY(-2px)";
+  }}
+  onMouseLeave={(e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    el.style.color = "#00e676";
+    el.style.backgroundColor = "#0a0f1d";
+    el.style.boxShadow = "0 0 20px rgba(0, 230, 118, 0.05)";
+    el.style.transform = "translateY(0)";
+  }}
+>
+  MRT Tracker
+</button>
+
       </div>
     </div>
   );

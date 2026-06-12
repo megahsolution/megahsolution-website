@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { Star } from "lucide-react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./Pages/LandingPage/LandingPage";
+import DataScienceSandbox from "./Pages/DataAnalytics/DataScienceSandbox";
+import MRTTrackerPage from "./Pages/MRTTracker/MRTTrackerPage";
+
 
 // Nullify other icons based on user design requests, keeping only Star active
 const Upload = () => null;
@@ -43,9 +46,9 @@ import {
   formatExcelValue
 } from "./utils/dataset";
 import { DataRecord, IngestionDiagnostics, EngineeringDiagnostics, ColumnEngineeringConfig, EdaDiagnostics, CorrelationPair } from "./types";
-import SourceCodeExplorer from "./components/SourceCodeExplorer";
+import SourceCodeExplorer from "./Pages/DataAnalytics/SourceCodeExplorer";
 import { DataScienceSandbox } from "./components/DataScienceSandbox";
-import { DatasetExplorer } from "./components/DatasetExplorer";
+import { DatasetExplorer } from "./Pages/DataAnalytics/DatasetExplorer";
 
 function DataWorkspace() {
   // Datasets states
@@ -3543,6 +3546,27 @@ function DataWorkspace() {
     </div>
   );
 }
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+
+        <Route
+          path="/MGSDataAnalytics"
+          element={<DataScienceSandbox />}
+        />
+
+        <Route
+          path="/MRTTracker"
+          element={<MRTTrackerPage />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
 export default function App() {
   return (
     <BrowserRouter>
