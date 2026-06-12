@@ -2,9 +2,9 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import "C:\Users\jenme\MEGAHSOLUTION\src\Pages\MRTTracker\MRTTrackerPage.tsx";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+
 import {
   Train,
   Clock,
@@ -40,7 +40,7 @@ import {
 } from "./utils";
 import { RouteState, DayType } from "./types";
 
-export default function App() {
+export default function MRTTrackerPage() {
   // --- STATE SYSTEM ---
   const [route, setRoute] = useState<RouteState>({
     origin: "",
