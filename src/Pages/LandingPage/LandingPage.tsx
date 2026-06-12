@@ -210,8 +210,10 @@ export default function LandingPage() {
   }}
 >
   Explore MGS Data Analytics
+</button>
+
 <button
-  onClick={() => navigate("/MGSDataAnalytics")}
+  onClick={() => navigate("/MRTTracker")}
   style={styles.btnExplore}
   onMouseEnter={(e) => {
     const el = e.currentTarget as HTMLButtonElement;
@@ -228,9 +230,6 @@ export default function LandingPage() {
     el.style.transform = "translateY(0)";
   }}
 >
-  Explore MGS Data Analytics
-</button>
-
   MRT Tracker
 </button>
 
