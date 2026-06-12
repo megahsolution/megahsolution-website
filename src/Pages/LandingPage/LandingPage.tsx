@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function LandingPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const navigate = useNavigate();
-  import { useNavigate } from "react-router-dom";
-
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
