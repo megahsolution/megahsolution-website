@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { Star } from "lucide-react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
 
 // Nullify other icons based on user design requests, keeping only Star active
 const Upload = () => null;
@@ -45,7 +47,7 @@ import SourceCodeExplorer from "./components/SourceCodeExplorer";
 import { DataScienceSandbox } from "./components/DataScienceSandbox";
 import { DatasetExplorer } from "./components/DatasetExplorer";
 
-export default function App() {
+function DataWorkspace() {
   // Datasets states
   const [rawData, setRawData] = useState<DataRecord[] | null>(null);
   const [ingestedData, setIngestedData] = useState<DataRecord[] | null>(null);
@@ -3539,5 +3541,15 @@ export default function App() {
         Designed with Excel Green Theme &bull; Data Science Workspace System v1.2
       </footer>
     </div>
+  );
+}
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/app" element={<DataWorkspace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
